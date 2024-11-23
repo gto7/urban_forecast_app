@@ -9,6 +9,7 @@ import { Kind } from "../../app/shared/tile_kind";
 export class CircleTileComponent {
   @Input() value = 0;
   @Input() type: Kind = Kind.density;
+  @Input() nbHab = 0;
 
   get printed_value(): string {
     let result = "";
@@ -16,9 +17,9 @@ export class CircleTileComponent {
     if (this.type === Kind.density) {
       result = `${this.value} hab/km²`;
     } else if (this.type === Kind.first_extension) {
-      result = `${this.value} ha`;
+      result = `${this.value} %`;
     } else if (this.type === Kind.final_extension) {
-      result = `${this.value} ha`;
+      result = `${this.value} %`;
     }
 
     return result;
@@ -34,9 +35,9 @@ export class CircleTileComponent {
         result = "yellow";
       } 
     } else if (this.type === Kind.first_extension) {
-      if (this.value > 50) {
+      if (this.value > 10) {
         result = "red";
-      } else if (this.value >= 25) {
+      } else if (this.value >= 1) {
         result = "yellow";
       }
     } else if (this.type === Kind.final_extension) {
