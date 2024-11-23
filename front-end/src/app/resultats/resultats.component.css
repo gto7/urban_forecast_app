@@ -1,0 +1,9 @@
+.tile_and_label {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+
+.separator {
+  width: 40px;
+}

@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="radio_but">
+    <form>
+      <label>
+        <input type="radio" name="choix" [(ngModel)]="selection"
+          value="Strategie1" />
+        Densification stricte
+      </label>
+      <br />
+      <label>
+        <input type="radio" name="choix" [(ngModel)]="selection"
+          value="Strategie2" />
+        Etalement urbain contrôlé
+      </label>
+      <br />
+      <label>
+        <input type="radio" name="choix" [(ngModel)]="selection"
+          value="Strategie3" />
+        Etalement urbain non contrôlé
+      </label>
+    </form>
+  </div>
+
+  <div class="slider">
+    <div>Accroissement de la population annuelle : {{ sliderValue }} hab/an</div>
+    <div class="slider-container">
+      <input 
+        type="range" 
+        id="slider" 
+        min="0" 
+        max="10000" 
+        step="100" 
+        [(ngModel)]="sliderValue"
+        (input)="onSliderChange($event)" />
+    </div>
+  </div>
+</div>

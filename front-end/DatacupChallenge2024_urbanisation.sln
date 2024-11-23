@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "DatacupChallenge2024_urbanisation", "DatacupChallenge2024_urbanisation.esproj", "{032342A0-0BD5-44D8-A8F9-0944C529588C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{032342A0-0BD5-44D8-A8F9-0944C529588C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3659686F-6C32-4DE6-AE99-17C7E51B9A27}
+	EndGlobalSection
+EndGlobal

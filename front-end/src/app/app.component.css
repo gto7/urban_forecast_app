@@ -1,0 +1,25 @@
+.main {
+    display:flex;
+    align-items: center;
+    padding-left: 30px;
+}
+
+.separator {
+  width: 60px;
+}
+
+.image_separator {
+  width: 20px;
+}
+
+.right {
+  border-radius: 50px;
+  border-style: solid;
+  border-color: dimgrey;
+  padding: 20px;
+}
+
+.image_border {
+  border-style: solid;
+  border-width: 1px;
+}
