@@ -13,6 +13,9 @@ import pandas as pd
 import geopandas as gpd
 
 
+
+
+
 class GeospatialLoader:
     """Classe pour charger et transformer des données géospatiales."""
 
@@ -38,7 +41,7 @@ class GeospatialLoader:
         data_zone["year"] = id_index
         data_zone.drop(columns="id", axis=1, inplace=True)
         data_zone.reset_index(drop=True, inplace=True)
-        data_zone = data_zone.explode()
+      #  data_zone = data_zone.explode()
         data_zone = data_zone.to_crs("EPSG:4326")
         data_zone['centroid'] = data_zone.geometry.centroid
         data_zone['area (hectare)'] = data_zone.geometry.area / 10000
@@ -58,6 +61,10 @@ class GeospatialLoader:
         """
         path_file = os.path.join(self.base_path, filename)
         ppr = gpd.read_file(path_file, mask=limit_geom)
+
+        #filtrage des INTERDICTIONS PPR 
+
+        ppr = ppr[ppr['degre'] == 'INTERDICTION']
         return ppr.to_crs("EPSG:4326")
 
     def load_plu(self, filename: str, limit_geom: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -98,24 +105,56 @@ class Preprocessor:
         self.loader = GeospatialLoader(base_path)
 
     def preprocessing_zone(self) -> gpd.GeoDataFrame:
-        """
-        Effectue le prétraitement des données géospatiales pour les zones.
-        """
-        # Charger les limites géographiques
-        lim = self.loader.load_poly_limit("limites_commune.shp")
+      """
+      Effectue le prétraitement des données géospatiales pour les zones.
+      """
+      # Charger les limites géographiques
+      lim = self.loader.load_poly_limit("limites_commune.shp")
 
-        # Charger les couches PPR et PLU
-        ppr = self.loader.load_ppr("ppr_approuve/ppr_approuvePolygon.shp", limit_geom=lim)
-        plu = self.loader.load_plu("plu/pos_plu/pos_pluPolygon.shp", limit_geom=lim)
+      urbain = self.loader.load_file_footprint(self.loader.base_path)
 
-        # Charger les carreaux géométriques
-        car_df = self.loader.load_carreaux(os.path.join(base_path,"Filosofi2017_carreaux_200m_shp/Filosofi2017_carreaux_200m_reun.shp"), limit_geom=lim)
+      # Charger les couches PPR et PLU
+      ppr = self.loader.load_ppr("ppr_approuve/ppr_approuvePolygon.shp", limit_geom=lim)
+      plu = self.loader.load_plu("PLU/plu.shp", limit_geom=lim)
 
-        # Réduire les polygones du PLU en fonction du PPR et joindre avec les carreaux
-        data = DataProcessor.reduce_plu_by_ppr(plu, ppr).sjoin(car_df, how="left", predicate="intersects")
+      # Charger les carreaux géométriques
+      car_df = self.loader.load_carreaux(
+          os.path.join(base_path, "Filosofi2017_carreaux_200m_shp/Filosofi2017_carreaux_200m_reun.shp"), 
+          limit_geom=lim
+      )
 
-        # MISSING: Ajouter une agrégation de population si nécessaire
-        return data
+      # Réduire les polygones du PLU en fonction du PPR
+      reduced_plu = DataProcessor.reduce_plu_by_ppr(plu, ppr)
+
+      print(reduced_plu.columns)
+
+      # Effectuer une jointure spatiale (right join) pour éviter les doublons
+      data = reduced_plu.sjoin(car_df, how="right", predicate="intersects")
+
+      # Assigner un ID unique à chaque enregistrement
+      data = data.reset_index()  # Réinitialiser l'index pour avoir des IDs uniques
+      data["unique_id"] = data.index
+
+      # Vérifier et supprimer les doublons si nécessaires
+      data = data.drop_duplicates(subset=[ "Idcar_200m"])
+      data['Ind'] = data['Ind'].astype(int)
+      # Optionnel : Ajouter une agrégation pour la population (exemple)
+      result = data.groupby('ogc_fid', as_index=False)['Ind'].sum()
+      
+      result['ogc_fid'] = result['ogc_fid'].astype(int)
+
+      result = result.merge(reduced_plu[['ogc_fid' , 'libelle' , 'typezone' , "datappro",	"datmodif" , 	"datefinval" , "geometry"]] , on= "ogc_fid" , how = 'left')
+
+      result = gpd.GeoDataFrame(result)
+
+      result['intersection urbain'] = result['geometry'].intersection(urbain[urbain['year'] =="2020"]['geometry'].reset_idnex(drop = True).loc[0])
+      result = result.to_crs(epsg=2154)
+
+      result['area (hectare)'] = result.geometry.area / 10000   
+
+
+      return result 
+
 
 
 
